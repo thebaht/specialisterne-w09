@@ -25,7 +25,7 @@ class Controller(object):
         self.destination = destination
 
     #Runs the filehandler
-    def run(self,number_of_threads : Optional[int] = None)->None:
+    def run(self,number_of_threads : Optional[int] = None) -> None:
         if number_of_threads: 
             file_handler = FileHandler(number_of_threads)
         else:
