@@ -64,3 +64,11 @@ I have no speficic points I want you to look at for feedback, so just find what 
 > &emsp; ln: 28-31
 
 ### Er Queue() threadsafe?
+
+### Changed controller function name
+
+controller.py : ln 20
+
+```py
+set_repor_file() -> set_report_file()
+```

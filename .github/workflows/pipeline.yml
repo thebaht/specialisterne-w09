@@ -1,0 +1,39 @@
+name: Run Python Tests
+
+on:
+  # Trigger the workflow on pushes and pull requests
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.7' # Specify your Python version
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: |
+          source venv/bin/activate
+          pytest --maxfail=5 --disable-warnings
