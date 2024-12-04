@@ -59,7 +59,7 @@ def test_download_success(temp_file):
         
 def test_download_failure_invalid_url(temp_file):
     downloader = Downloader()
-    url = "asd"  
+    url = "http://invalid_url.com"  
 
     with patch("requests.get") as mock_get:
         mock_get.side_effect = requests.exceptions.RequestException("Invalid URL")
@@ -79,7 +79,7 @@ def test_download_failure_empty_url(temp_file):
 
 def test_download_alt_success(temp_file):
     downloader = Downloader()
-    url = "asd"
+    url = "http://invalid_url.com"
     alt_url = "http://cdn12.a1.net/m/resources/media/pdf/A1-Umwelterkl-rung-2016-2017.pdf"
 
     # Mock the requests.get call
@@ -104,38 +104,33 @@ def test_download_alt_success(temp_file):
         assert success, "Download should succeed"
         
 
-
 def test_download_failure_invalid_alt_url(temp_file):
     downloader = Downloader()
-    url = "asd"  # Invalid URL
-    alt_url = "asd"  # Another invalid URL (simulating failure)
+    url = "http://invalid_url.com"  # Invalid URL
+    alt_url = "http://another_invalid_url.com"  # Another invalid URL (simulating failure)
+    downloader = Downloader()
 
-    # Mock the requests.get call
+    # Mock the requests.get call to simulate failure for both URLs
     with patch("requests.get") as mock_get:
-        # Configure the mock to simulate failure for the main URL and success for alt URL
         def side_effect(request_url, *args, **kwargs):
             if request_url == url:
                 raise requests.exceptions.RequestException("Invalid URL")
             elif request_url == alt_url:
-                # Simulate failure on alt_url (for instance, returning non-PDF content or raising an error)
-                mock_response = MagicMock()
-                mock_response.headers = {"content-type": "application/pdf"}
-                mock_response.content = b"PDF content"
-                return mock_response
-            return None
-        
-        # Assign the side effect to simulate the failure for both URLs
+                raise requests.exceptions.RequestException("Invalid alt URL")
+
+
+        # Set the side effect to simulate failures for both URLs
         mock_get.side_effect = side_effect
 
         # Run the download method
         success = downloader.download(url, temp_file, alt_url)
 
-        # Assert that the download fails because both URLs are invalid or failed
-        assert not success, "Download should fail for invalid URL and alternative URL"
+        # Assert that the download fails because both URLs failed
+        assert not success, "Download should fail when both URL and alt_url fail"
         
 def test_download_failure_no_alt_url(temp_file):
     downloader = Downloader()
-    url = "asd"
+    url = "http://invalid_url.com"
     alt_url = None  # No alt_url provided
 
     # Mock the requests.get call

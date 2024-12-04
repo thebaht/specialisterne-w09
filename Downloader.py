@@ -40,6 +40,3 @@ class Downloader(object):
             return False
         
         return success
-if __name__ == "__main__":
-    downloader = Downloader()
-    downloader.download("http://arpeissig.at/wp-content/uploads/2016/02/D7_NHB_ARP_Final_2.pdf", "test.pdf")
