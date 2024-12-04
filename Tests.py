@@ -181,8 +181,8 @@ def test_download_thread(temp_output_dir):
 
 def test_controller_initialization():
     controller = Controller()
-    assert controller.url_file_name == "customer_data\\GRI_2017_2020.xlsx"
-    assert controller.report_file_name == "customer_data\\Metadata2017_2020.xlsx"
+    assert controller.url_file_name == "customer_data/GRI_2017_2020.xlsx"
+    assert controller.report_file_name == "customer_data/Metadata2017_2020.xlsx"
     assert controller.destination == "files"
 
 
