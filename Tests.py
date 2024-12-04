@@ -10,13 +10,38 @@ import polars as pl
 import shutil
 import requests
 
-# Unit tests......................................................................
+# fixtures......................................................................
 @pytest.fixture
 def temp_file(tmp_path):
     file_path = tmp_path / "test_output.pdf"
     yield str(file_path)
 
 
+@pytest.fixture
+def temp_output_dir(tmp_path):
+    destination = tmp_path / "output"
+    yield destination
+    if os.path.exists(destination):
+        shutil.rmtree(destination)
+
+
+@pytest.fixture
+def setup_test_files(tmp_path):
+    url_file = tmp_path / "test_urls.xlsx"
+    report_file = tmp_path / "test_report.xlsx"
+    
+    file_data = pl.DataFrame({
+        "BRnum": ["BR50058", "BR50059"],
+        "Pdf_URL": ["http://dam.abbott.com/en-ie/documents/pdf/2994%20Citizenship%20Report%202016%20v15.pdf", "http://www.abc.net.au/corp/annual-report/2017/documents/ABC_AnnualREport-2017_Volume-1.pdf"],
+        "Report Html Address": ["http://www.ie.abbott/about-us/global-citizenship/citizenship-reporting.html", "http://www.abc.net.au/corp/annual-report/2017/home.html"]
+    })
+    file_data.write_excel(url_file)
+    report_file.touch()
+    return str(url_file), str(report_file), str(tmp_path)
+
+
+
+# Unit tests......................................................................
 def test_download_success(temp_file):
     downloader = Downloader()
     url = "http://cdn12.a1.net/m/resources/media/pdf/A1-Umwelterkl-rung-2016-2017.pdf"
@@ -82,30 +107,31 @@ def test_download_alt_success(temp_file):
 
 def test_download_failure_invalid_alt_url(temp_file):
     downloader = Downloader()
-    url = "asd"
-    alt_url = "asd"
+    url = "asd"  # Invalid URL
+    alt_url = "asd"  # Another invalid URL (simulating failure)
 
     # Mock the requests.get call
     with patch("requests.get") as mock_get:
-        # Configure the mock to simulate failure for the main URL
+        # Configure the mock to simulate failure for the main URL and success for alt URL
         def side_effect(request_url, *args, **kwargs):
             if request_url == url:
                 raise requests.exceptions.RequestException("Invalid URL")
             elif request_url == alt_url:
-                # Simulate a successful response for the alternative URL
+                # Simulate failure on alt_url (for instance, returning non-PDF content or raising an error)
                 mock_response = MagicMock()
                 mock_response.headers = {"content-type": "application/pdf"}
                 mock_response.content = b"PDF content"
                 return mock_response
-
+            return None
+        
+        # Assign the side effect to simulate the failure for both URLs
         mock_get.side_effect = side_effect
 
         # Run the download method
         success = downloader.download(url, temp_file, alt_url)
 
-        # Assert that the download fails
+        # Assert that the download fails because both URLs are invalid or failed
         assert not success, "Download should fail for invalid URL and alternative URL"
-        
         
 def test_download_failure_no_alt_url(temp_file):
     downloader = Downloader()
@@ -155,12 +181,7 @@ def test_download_failure_file_write(temp_file):
             assert not success, "Download should fail due to file write error"
 
 
-@pytest.fixture
-def temp_output_dir(tmp_path):
-    destination = tmp_path / "output"
-    yield destination
-    if os.path.exists(destination):
-        shutil.rmtree(destination)
+
          
 def test_download_thread(temp_output_dir):
     destination = temp_output_dir
@@ -189,22 +210,6 @@ def test_controller_initialization():
 
 
 # Integration tests......................................................................   
-@pytest.fixture
-def setup_test_files(tmp_path):
-    # Create test input files
-    url_file = tmp_path / "test_urls.xlsx"
-    report_file = tmp_path / "test_report.xlsx"
-    
-    # Populate test_urls.xlsx with valid data
-    file_data = pl.DataFrame({
-        "BRnum": ["BR50058", "BR50059"],
-        "Pdf_URL": ["http://dam.abbott.com/en-ie/documents/pdf/2994%20Citizenship%20Report%202016%20v15.pdf", "http://www.abc.net.au/corp/annual-report/2017/documents/ABC_AnnualREport-2017_Volume-1.pdf"],
-        "Report Html Address": ["http://www.ie.abbott/about-us/global-citizenship/citizenship-reporting.html", "http://www.abc.net.au/corp/annual-report/2017/home.html"]
-    })
-    file_data.write_excel(url_file)
-    report_file.touch()
-    return str(url_file), str(report_file), str(tmp_path)
-
 def test_controller_run(setup_test_files):
     url_file, report_file, destination = setup_test_files
     controller = Controller()
