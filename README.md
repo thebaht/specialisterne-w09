@@ -70,5 +70,33 @@ I have no speficic points I want you to look at for feedback, so just find what 
 controller.py : ln 20
 
 ```py
-set_repor_file() -> set_report_file()
+set_repor_file()
 ```
+
+Changed to
+
+```py
+set_report_file()
+```
+
+### Changed write error handling to correctly catch exceptions
+
+```py
+with open(destination_path, "wb") as file:
+    try:
+        file.write(response.content)
+    except:
+        return False
+```
+
+Changed to
+
+```py
+try:
+    with open(destination_path, "wb") as file:
+        file.write(response.content)
+except:
+    return False
+```
+
+### Moved if __name__ == "__main__" logic to main()

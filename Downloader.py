@@ -33,11 +33,12 @@ class Downloader(object):
                 return False
        
         #Sace file to the distination
-        with open(destination_path, "wb") as file:
-            try:
+        try:
+            with open(destination_path, "wb") as file:
                 file.write(response.content)
-            except:
-                return False
+        except:
+            return False
+        
         return success
 if __name__ == "__main__":
     downloader = Downloader()

@@ -31,4 +31,4 @@ jobs:
       - name: Run tests
         run: |
           source venv/bin/activate
-          pytest Tests.py
+          pytest Tests.py --cov --cov-fail-under=80
