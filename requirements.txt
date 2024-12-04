@@ -3,6 +3,7 @@ certifi==2024.8.30
 charset-normalizer==3.4.0
 colorama==0.4.6
 comm==0.2.2
+coverage==7.6.8
 debugpy==1.8.9
 decorator==5.1.1
 et_xmlfile==2.0.0
@@ -31,9 +32,10 @@ pure_eval==0.2.3
 pyarrow==18.1.0
 Pygments==2.18.0
 pytest==8.3.4
+pytest-cov==6.0.0
 python-dateutil==2.9.0.post0
 pytz==2024.2
-pywin32==308; sys_platform == "win32"
+pywin32==308
 pyzmq==26.2.0
 requests==2.32.3
 six==1.16.0
