@@ -78,7 +78,7 @@ set_report_file()
 
 <br>
 
-### Moved if __name__ == "__main__" logic to main()
+### Moved \_\_main\_\_ logic to main()
 
 ```py
 if __name__ == "__main__":
