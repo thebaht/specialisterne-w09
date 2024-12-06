@@ -174,13 +174,6 @@ def test_download_failure_file_write(temp_file):
             success = downloader.download(url, temp_file)
             assert not success, "Download should fail due to file write error"
 
- 
-def test_controller_initialization():
-    controller = Controller()
-    assert controller.url_file_name == os.path.join("customer_data","GRI_2017_2020.xlsx")
-    assert controller.report_file_name == os.path.join("customer_data","Metadata2017_2020.xlsx")
-    assert controller.destination == "files"
-
 
 def test_correct_number_of_threads_used(setup_test_files):
     url_file, report_file, destination = setup_test_files
@@ -195,9 +188,7 @@ def test_correct_number_of_threads_used(setup_test_files):
                 # Ensure the correct number of threads were created
                 assert mock_thread.call_count == 5, f"Expected 5 threads, but got {mock_thread.call_count}"
 
-
-
-# Integration tests......................................................................   
+    
 def test_download_thread(temp_output_dir):
     destination = temp_output_dir
     queue = Queue()
@@ -213,6 +204,15 @@ def test_download_thread(temp_output_dir):
     assert finished_dict["BRnum"] == ["BR50045"], "BRnum should be updated"
     assert finished_dict["pdf_downloaded"] == ["yes"], "Download status should be 'yes'"
     assert os.path.exists(destination), "Destination directory should exist"
+
+
+
+# Integration tests......................................................................    
+def test_controller_initialization():
+    controller = Controller()
+    assert controller.url_file_name == os.path.join("customer_data","GRI_2017_2020.xlsx")
+    assert controller.report_file_name == os.path.join("customer_data","Metadata2017_2020.xlsx")
+    assert controller.destination == "files"
     
 
 def test_controller_run(setup_test_files):
