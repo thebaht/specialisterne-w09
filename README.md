@@ -63,8 +63,6 @@ I have no speficic points I want you to look at for feedback, so just find what 
 > Polar_File_Handler.py  
 > &emsp; ln: 28-31
 
-### Er Queue() threadsafe?
-
 ### Changed controller function name
 
 controller.py : ln 20
@@ -100,3 +98,8 @@ except:
 ```
 
 ### Moved if __name__ == "__main__" logic to main()
+
+```py
+if __name__ == "__main__":
+    main()
+```

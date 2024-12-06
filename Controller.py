@@ -29,7 +29,7 @@ class Controller(object):
         if number_of_threads: 
             file_handler = FileHandler(number_of_threads)
         else:
-            file_handler = FileHandler()
+            file_handler = FileHandler() #! not covered
         file_handler.start_download(self.url_file_name,self.report_file_name,self.destination)
 
 def main():
@@ -55,11 +55,11 @@ def main():
     if args.threads:
         try:
             controller.run(int(args.threads))
-        except:
-            print("Thread should be an integer")
+        except: #! not covered
+            print("Thread should be an integer") #! not covered
     else:
-        controller.run()
+        controller.run() #! not covered
 
 #My main function
 if __name__ == "__main__":
-    main()
+    main() #! not covered

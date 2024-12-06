@@ -28,7 +28,7 @@ class FileHandler(object):
             if downloaded:
                 finished_dict["pdf_downloaded"].append("yes")
             else:
-                finished_dict["pdf_downloaded"].append("no")
+                finished_dict["pdf_downloaded"].append("no") #! not covered
             queue.task_done()
 
     #Starts downlaoding files from urls listed in url_file which will be placed in the destination, and reported in the meta file
@@ -44,9 +44,9 @@ class FileHandler(object):
         #Tries reading the files listed as not downloaded if it fails it will make a new meta file that fullfills the structure
         try:
             report_data = pl.read_excel(meta_file, columns = [ID,"pdf_downloaded"])
-            report_data=report_data.filter(pl.col("pdf_downloaded") == "yes")
+            report_data=report_data.filter(pl.col("pdf_downloaded") == "yes") #! not covered
             #Sort out files that are downloaded
-            file_data = file_data.join(report_data,on=ID, how="anti")
+            file_data = file_data.join(report_data,on=ID, how="anti") #! not covered
         except:
             print("New meta data file will be created")
 
@@ -77,11 +77,11 @@ class FileHandler(object):
         finished_data_frame = pl.from_dict(finished_dict)
 
         if not report_data.is_empty():
-            finished_data_frame = pl.concat([finished_data_frame,report_data],rechunk = True)
+            finished_data_frame = pl.concat([finished_data_frame,report_data],rechunk = True) #! not covered
         with Workbook(meta_file) as file:
             finished_data_frame.write_excel(workbook = file)
         
 
 if __name__ == "__main__":
-    file_handler = FileHandler()
-    file_handler.start_download(os.path.join("customer_data","GRI_2017_2020.xlsx"),os.path.join("customer_data","Metadata2017_2020.xlsx"),"files")
+    file_handler = FileHandler() #! not covered
+    file_handler.start_download(os.path.join("customer_data","GRI_2017_2020.xlsx"),os.path.join("customer_data","Metadata2017_2020.xlsx"),"files") #! not covered
