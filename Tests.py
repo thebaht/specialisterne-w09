@@ -9,6 +9,7 @@ from Controller import Controller, main
 import polars as pl
 import shutil
 import requests
+import threading
 
 # fixtures......................................................................
 
@@ -175,13 +176,13 @@ def test_download_failure_file_write(temp_file):
 
 
 
+
 # Integration tests......................................................................   
 def test_controller_initialization():
     controller = Controller()
     assert controller.url_file_name == os.path.join("customer_data","GRI_2017_2020.xlsx")
     assert controller.report_file_name == os.path.join("customer_data","Metadata2017_2020.xlsx")
     assert controller.destination == "files"
-    
     
 def test_download_thread(temp_output_dir):
     destination = temp_output_dir
@@ -198,6 +199,21 @@ def test_download_thread(temp_output_dir):
     assert finished_dict["BRnum"] == ["BR50045"], "BRnum should be updated"
     assert finished_dict["pdf_downloaded"] == ["yes"], "Download status should be 'yes'"
     assert os.path.exists(destination), "Destination directory should exist"
+    
+def test_correct_number_of_threads_used(setup_test_files):
+    url_file, report_file, destination = setup_test_files
+    file_handler = FileHandler(number_of_threads=5)  # Set the number of threads to 5
+
+    # Mock `requests.get` to simulate a fast response
+    with patch("requests.get", return_value=MagicMock(headers={"content-type": "application/pdf"}, content=b"PDF content")):
+        # Mock `threading.Thread` to count thread creations
+        with patch("threading.Thread") as mock_thread:
+            # Mock `Queue.join` to skip waiting for threads to complete
+            with patch("queue.Queue.join", return_value=None):
+                file_handler.start_download(url_file, report_file, destination)
+
+                # Ensure the correct number of threads were created
+                assert mock_thread.call_count == 5, f"Expected 5 threads, but got {mock_thread.call_count}"
 
 
 def test_controller_run(setup_test_files):
