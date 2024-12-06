@@ -142,7 +142,7 @@ def test_download_failure_no_alt_url(temp_file):
         success = downloader.download(url, temp_file, alt_url)
         assert not success, "Download should fail when no alt_url is provided"
         
-
+        
 def test_download_failure_non_pdf_content(temp_file):
     downloader = Downloader()
     url = "http://www.abc.net.au/corp/annual-report/2017/home.html"  # A URL returning non-PDF content
@@ -175,31 +175,13 @@ def test_download_failure_file_write(temp_file):
             assert not success, "Download should fail due to file write error"
 
 
-
-
-# Integration tests......................................................................   
 def test_controller_initialization():
     controller = Controller()
     assert controller.url_file_name == os.path.join("customer_data","GRI_2017_2020.xlsx")
     assert controller.report_file_name == os.path.join("customer_data","Metadata2017_2020.xlsx")
     assert controller.destination == "files"
-    
-def test_download_thread(temp_output_dir):
-    destination = temp_output_dir
-    queue = Queue()
-    finished_dict = {"BRnum": [], "pdf_downloaded": []}
-    queue.put(["http://www.hkexnews.hk/listedco/listconews/SEHK/2017/0512/LTN20170512165.pdf", str(destination), "BR50045", None, finished_dict])
 
-    file_handler = FileHandler()
 
-    with patch("Downloader.Downloader.download") as mock_download:
-        mock_download.return_value = True # Simulate successful download
-        file_handler.download_thread(queue)
-
-    assert finished_dict["BRnum"] == ["BR50045"], "BRnum should be updated"
-    assert finished_dict["pdf_downloaded"] == ["yes"], "Download status should be 'yes'"
-    assert os.path.exists(destination), "Destination directory should exist"
-    
 def test_correct_number_of_threads_used(setup_test_files):
     url_file, report_file, destination = setup_test_files
     file_handler = FileHandler(number_of_threads=5)  # Set the number of threads to 5
@@ -216,6 +198,25 @@ def test_correct_number_of_threads_used(setup_test_files):
                 assert mock_thread.call_count == 5, f"Expected 5 threads, but got {mock_thread.call_count}"
 
 
+
+# Integration tests......................................................................   
+def test_download_thread(temp_output_dir):
+    destination = temp_output_dir
+    queue = Queue()
+    finished_dict = {"BRnum": [], "pdf_downloaded": []}
+    queue.put(["http://www.hkexnews.hk/listedco/listconews/SEHK/2017/0512/LTN20170512165.pdf", str(destination), "BR50045", None, finished_dict])
+
+    file_handler = FileHandler()
+
+    with patch("Downloader.Downloader.download") as mock_download:
+        mock_download.return_value = True # Simulate successful download
+        file_handler.download_thread(queue)
+
+    assert finished_dict["BRnum"] == ["BR50045"], "BRnum should be updated"
+    assert finished_dict["pdf_downloaded"] == ["yes"], "Download status should be 'yes'"
+    assert os.path.exists(destination), "Destination directory should exist"
+    
+
 def test_controller_run(setup_test_files):
     url_file, report_file, destination = setup_test_files
     controller = Controller()
@@ -228,7 +229,6 @@ def test_controller_run(setup_test_files):
     # Verify outputs
     assert os.path.exists(destination), "Destination folder should be created"
     assert os.listdir(destination), "Destination folder should contain downloaded files"
-
 
 
 def test_command_line_args(setup_test_files):
