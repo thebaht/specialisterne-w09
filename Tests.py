@@ -19,6 +19,7 @@ def temp_file(tmp_path):
     yield str(file_path) # Provide the path to the test
     # Temporary files are automatically cleaned up after tests by pytest
 
+
 # Fixture for creating a temporary directory to simulate output directory for downloads
 @pytest.fixture
 def temp_output_dir(tmp_path):
@@ -26,6 +27,7 @@ def temp_output_dir(tmp_path):
     yield destination # Provide the path to the test
     if os.path.exists(destination): # Clean up the directory after test
         shutil.rmtree(destination)
+
 
 # Fixture for creating temporary test files 
 @pytest.fixture
@@ -172,14 +174,15 @@ def test_download_failure_file_write(temp_file):
             assert not success, "Download should fail due to file write error"
 
 
+
+# Integration tests......................................................................   
 def test_controller_initialization():
     controller = Controller()
     assert controller.url_file_name == os.path.join("customer_data","GRI_2017_2020.xlsx")
     assert controller.report_file_name == os.path.join("customer_data","Metadata2017_2020.xlsx")
     assert controller.destination == "files"
-
-
-# Integration tests......................................................................   
+    
+    
 def test_download_thread(temp_output_dir):
     destination = temp_output_dir
     queue = Queue()
