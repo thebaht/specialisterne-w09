@@ -8,3 +8,4 @@ Week5/files/
 files
 ~$*.xlsx
 .coverage
+coverage.json

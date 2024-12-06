@@ -51,33 +51,45 @@ python Controller.py
 
 I have no speficic points I want you to look at for feedback, so just find what you deem the most necesarry
 
-## Changes
+<br>
+<br>
+<br>
 
-### Create directory and add data file
+# Changes
+
+## Create directory and add data file
 
 > /customer_data/  
 > &emsp; GRI_2017_2020.xlsx
 
-### BRNum and download status not in the same order
+<br>
 
-> Polar_File_Handler.py  
-> &emsp; ln: 28-31
+## Controller.py
 
 ### Changed controller function name
-
-controller.py : ln 20
 
 ```py
 set_repor_file()
 ```
 
-Changed to
-
 ```py
 set_report_file()
 ```
 
-### Changed write error handling to correctly catch exceptions
+<br>
+
+### Moved if __name__ == "__main__" logic to main()
+
+```py
+if __name__ == "__main__":
+    main()
+```
+
+<br>
+
+## Downloader.py
+
+### Changed write error handling to correctly catch mocked exceptions
 
 ```py
 with open(destination_path, "wb") as file:
@@ -87,19 +99,10 @@ with open(destination_path, "wb") as file:
         return False
 ```
 
-Changed to
-
 ```py
 try:
     with open(destination_path, "wb") as file:
         file.write(response.content)
 except:
     return False
-```
-
-### Moved if __name__ == "__main__" logic to main()
-
-```py
-if __name__ == "__main__":
-    main()
 ```

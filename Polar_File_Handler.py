@@ -60,7 +60,7 @@ class FileHandler(object):
         #We thru each br number and starts a download
         for row in file_data.rows(named=True):
             if j == 20:
-                break
+                break #! not covered
             alt_link = row["Report Html Address"]
             link = row["Pdf_URL"]
             index = row[ID]            
