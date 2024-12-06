@@ -186,12 +186,10 @@ def test_correct_number_of_threads_used(setup_test_files):
     url_file, report_file, destination = setup_test_files
     file_handler = FileHandler(number_of_threads=5)  # Set the number of threads to 5
 
-    # Mock `requests.get` to simulate a fast response
+    # Mock requests.get
     with patch("requests.get", return_value=MagicMock(headers={"content-type": "application/pdf"}, content=b"PDF content")):
-        # Mock `threading.Thread` to count thread creations
-        with patch("threading.Thread") as mock_thread:
-            # Mock `Queue.join` to skip waiting for threads to complete
-            with patch("queue.Queue.join", return_value=None):
+        with patch("threading.Thread") as mock_thread:          # Mock threading.Thread to count thread creations
+            with patch("queue.Queue.join", return_value=None):  # Mock Queue.join to skip waiting for threads to complete
                 file_handler.start_download(url_file, report_file, destination)
 
                 # Ensure the correct number of threads were created
